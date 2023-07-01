@@ -32,7 +32,7 @@ export default function Home() {
               korzyści, które płyną z wyższego BAF. Dbając o BAF, dbamy o nasze
               miast, zdrowie i naszą przyszłość.
             </Paragraph>
-            <Button as="link" href="/kalkulator-baf" className="mt-12">
+            <Button as="link" href="/znajdz-dzialke" className="mt-12">
               Oblicz BAF
             </Button>
           </div>
