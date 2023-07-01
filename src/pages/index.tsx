@@ -5,6 +5,7 @@ import {
   Paragraph,
   SecondaryHeadline
 } from '@/components/Typography'
+import { Button } from '@/components/Button/Button'
 
 export default function Home() {
   return (
@@ -31,6 +32,9 @@ export default function Home() {
               korzyści, które płyną z wyższego BAF. Dbając o BAF, dbamy o nasze
               miast, zdrowie i naszą przyszłość.
             </Paragraph>
+            <Button as="link" href="/kalkulator-baf" className="mt-12">
+              Oblicz BAF
+            </Button>
           </div>
         </div>
       </Row>
