@@ -11,10 +11,11 @@ export const Button = (props: ButtonProps) => {
     as = 'button',
     onClick,
     disabled,
+    type = 'button',
     ...rest
   } = props
   const cssBase =
-    'inline-flex items-center px-6 min-w-[12rem] h-12 rounded-md text-white ' +
+    'inline-flex items-center px-6 min-w-[10rem] h-12 rounded-md text-white ' +
     'font-semibold bg-orange-400 focus:outline-none focus:ring-2 focus:ring-orange-400 ' +
     'focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed'
 
@@ -23,6 +24,7 @@ export const Button = (props: ButtonProps) => {
     className: classNames(cssBase, className),
     disabled,
     ...(onClick && { onClick }),
+    ...(Component === 'button' && type && { type }),
     ...rest
   }
 
