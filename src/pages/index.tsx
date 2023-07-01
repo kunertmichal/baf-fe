@@ -1,8 +1,10 @@
-import Image from 'next/image'
-import { Inter } from 'next/font/google'
-
-const inter = Inter({ subsets: ['latin'] })
+import { Row } from '@/components/Row'
 
 export default function Home() {
-  return <div>dupa</div>
+  return (
+    <Row className="grid-cols-2">
+      <div>obrazek</div>
+      <div>opis</div>
+    </Row>
+  )
 }
