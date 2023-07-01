@@ -6,14 +6,15 @@ import {
   SecondaryHeadline
 } from '@/components/Typography'
 import { Button } from '@/components/Button/Button'
+import { BackgroundColumn } from '@/components/BackgroundColumn'
 
 export default function Home() {
   return (
     <DefaultLayout>
       <Row className="grid-cols-2">
-        <div className="min-h-[calc(100vh-5rem)] bg-main-bg bg-cover bg-center" />
+        <BackgroundColumn bgClassName="bg-main" />
         <div className="px-24 flex items-center">
-          <div className="w-full max-w-xl">
+          <div className="w-full max-w-xl mx-auto">
             <PrimaryHeadline className="mb-12">Kalkulator BAF</PrimaryHeadline>
             <SecondaryHeadline>
               Czym jest BAF i dlaczego jest ważny?
