@@ -1,3 +1,5 @@
+import { DefaultLayout } from '@/components/DefaultLayout'
+
 export default function GetInspired() {
-  return <div>Zainspiruj sie</div>
+  return <DefaultLayout>Zainspiruj sie</DefaultLayout>
 }

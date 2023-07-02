@@ -49,7 +49,7 @@ export const Navbar = () => {
       </div>
       <ul className="flex gap-x-6 ml-auto">
         <Link href="/">Strona główna</Link>
-        <Link href="/oblicz-baf">Kalkulator</Link>
+        <Link href="/znajdz-dzialke">Kalkulator</Link>
         <Link href="/zainspiruj-sie">Zainspiruj się</Link>
       </ul>
     </nav>
