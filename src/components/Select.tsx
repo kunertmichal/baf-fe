@@ -10,7 +10,7 @@ export const Select = forwardRef<
 >((props, ref) => {
   return (
     <div className="relative">
-      <span className="pointer-events-none absolute bg-white px-2 top-1/2 -translate-y-1/2 right-[2px]">
+      <span className="pointer-events-none absolute bg-white px-2 top-1/2 -translate-y-1/2 right-[2px] bg-white">
         <ChevronUpDownIcon className="w-6 h-6" />
       </span>
       <select
