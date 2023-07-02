@@ -3,7 +3,7 @@ import Link from 'next/link'
 export const Navbar = () => {
   return (
     <nav className="flex items-center h-20 fixed top-0 left-0 w-full border shadow px-8">
-      <div className="flex">
+      <div className="flex items-center gap-2">
         <svg
           width="64"
           height="32"
@@ -46,6 +46,10 @@ export const Navbar = () => {
             </linearGradient>
           </defs>
         </svg>
+        <div>
+          <p className="font-bold text-xl leading-none">BAF</p>
+          <p className="leading-none text-sm">Kalkulator</p>
+        </div>
       </div>
       <ul className="flex gap-x-6 ml-auto">
         <Link href="/">Strona główna</Link>

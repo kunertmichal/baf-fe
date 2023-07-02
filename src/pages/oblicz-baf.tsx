@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import Image from 'next/image'
 import * as Accordion from '@radix-ui/react-accordion'
 import { DefaultLayout } from '@/components/DefaultLayout'
 import { Row } from '@/components/Row'
@@ -66,8 +67,23 @@ export default function CalculateBAF() {
                 </Accordion.Header>
                 {indicator.fields.map(field => (
                   <Accordion.Content key={field.id} className="p-2">
-                    <p className="text-lg font-semibold">{field.label}</p>
-                    <p className="text-xs">{field.description}</p>
+                    <div className="grid grid-cols-12 gap-2">
+                      <div className="col-span-6 flex flex-col justify-center">
+                        <p className="text-lg font-semibold leading-tight">
+                          {field.label}
+                        </p>
+                        <p className="text-xs">{field.description}</p>
+                      </div>
+                      <div className="col-span-2 flex items-center justify-center">
+                        <Image
+                          src="/indicator.png"
+                          alt={field.label}
+                          width={70}
+                          height={70}
+                        />
+                      </div>
+                      <div className="col-span-4 flex items-center">Input</div>
+                    </div>
                   </Accordion.Content>
                 ))}
               </Accordion.Item>
