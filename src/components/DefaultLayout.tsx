@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import { classNames } from '@/helpers/classNames'
+import { Navbar } from '@/components/Navbar'
 
 type DefaultLayoutProps = {
   children: ReactNode
@@ -7,5 +8,10 @@ type DefaultLayoutProps = {
 }
 
 export const DefaultLayout = ({ children, className }: DefaultLayoutProps) => {
-  return <div className={classNames('pt-20', className)}>{children}</div>
+  return (
+    <>
+      <Navbar />
+      <div className={classNames('pt-20', className)}>{children}</div>
+    </>
+  )
 }

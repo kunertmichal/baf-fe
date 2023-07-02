@@ -1,26 +1,56 @@
-import type { SyntheticEvent } from 'react'
+import type { FormEvent } from 'react'
 import * as Tabs from '@radix-ui/react-tabs'
 import * as Form from '@radix-ui/react-form'
-import type { PlotType } from '@/constants/plotTypes'
-import { plotTypes } from '@/constants/plotTypes'
-import { ChevronUpDownIcon } from '@heroicons/react/20/solid'
+import { usePlotData } from '@/store/store'
 import { DefaultLayout } from '@/components/DefaultLayout'
 import { Row } from '@/components/Row'
 import { BackgroundColumn } from '@/components/BackgroundColumn'
 import { Paragraph, PrimaryHeadline } from '@/components/Typography'
 import { Button } from '@/components/Button/Button'
+import { Select } from '@/components/Select'
+import { useState } from 'react'
+import { useRouter } from 'next/router'
 
 export default function FindPlot() {
-  const handleSubmit = (e: SyntheticEvent) => {
-    e.preventDefault()
-    console.log(e)
+  const router = useRouter()
+  const setPlotType = usePlotData(state => state.setType)
+  const setArea = usePlotData(state => state.setArea)
+  const [activeTab, setActiveTab] = useState<'plotIds' | 'plotAddress'>(
+    'plotIds'
+  )
 
-    /**
-     * TODO
-     * 1.) zapisz dane do store'a
-     * 2.) pobierz dane dzialki
-     * 3.) przekieruj do kalkulatora
-     * */
+  const handleTabChange = (value: string) => {
+    setActiveTab(value as 'plotIds' | 'plotAddress')
+  }
+
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+
+    const formElements = event.currentTarget.elements
+
+    const getValue = (name: string) =>
+      (formElements.namedItem(name) as HTMLInputElement).value
+
+    const plotType = getValue('plotType')
+
+    const payload = {
+      data:
+        activeTab === 'plotIds'
+          ? {
+              districtId: getValue('plotDistrictId'),
+              plotId: getValue('plotId')
+            }
+          : {
+              street: getValue('plotAddressStreet'),
+              number: getValue('plotAddressNumber')
+            }
+    }
+
+    setPlotType(JSON.parse(plotType))
+    setArea(766)
+    router.push('/oblicz-baf')
+
+    console.log(payload)
   }
 
   return (
@@ -37,10 +67,10 @@ export default function FindPlot() {
               pobierzemy jej powierzchnię.
             </Paragraph>
             <Form.Root onSubmit={handleSubmit}>
-              <Tabs.Root defaultValue="plotId">
+              <Tabs.Root value={activeTab} onValueChange={handleTabChange}>
                 <Tabs.List className="flex space-x-2 border-b-2 pb-2">
                   <Tabs.Trigger
-                    value="plotId"
+                    value="plotIds"
                     className="data-[state='active']:text-gray-600 data-[state='active']:bg-gray-100 py-2 px-4 rounded-md font-semibold text-gray-400 hover:text-gray-600"
                   >
                     Numer działki
@@ -52,22 +82,45 @@ export default function FindPlot() {
                     Adres działki
                   </Tabs.Trigger>
                 </Tabs.List>
-                <Tabs.Content value="plotId" className="pt-8 focus:outline-0">
-                  <Form.Field name="plotId">
-                    <Form.Label className="text-sm font-semibold mb-1 block">
-                      Numer działki
-                    </Form.Label>
-                    <Form.Control asChild>
-                      <input
-                        type="text"
-                        required
-                        className="w-full border border-gray-400 rounded-md h-12 px-4 focus:outline-gray-600"
-                      />
-                    </Form.Control>
-                    <Form.Message match="valueMissing" className="text-red-500">
-                      To pole nie może być puste
-                    </Form.Message>
-                  </Form.Field>
+                <Tabs.Content value="plotIds" className="pt-8 focus:outline-0">
+                  <div className="grid grid-cols-2 gap-6">
+                    <Form.Field name="plotDistrictId">
+                      <Form.Label className="text-sm font-semibold mb-1 block">
+                        Numer obrębu
+                      </Form.Label>
+                      <Form.Control asChild>
+                        <input
+                          type="text"
+                          required
+                          className="w-full border border-gray-400 rounded-md h-12 px-4 focus:outline-gray-600"
+                        />
+                      </Form.Control>
+                      <Form.Message
+                        match="valueMissing"
+                        className="text-red-500 text-sm"
+                      >
+                        To pole nie może być puste
+                      </Form.Message>
+                    </Form.Field>
+                    <Form.Field name="plotId">
+                      <Form.Label className="text-sm font-semibold mb-1 block">
+                        Numer działki
+                      </Form.Label>
+                      <Form.Control asChild>
+                        <input
+                          type="text"
+                          required
+                          className="w-full border border-gray-400 rounded-md h-12 px-4 focus:outline-gray-600"
+                        />
+                      </Form.Control>
+                      <Form.Message
+                        match="valueMissing"
+                        className="text-red-500 text-sm"
+                      >
+                        To pole nie może być puste
+                      </Form.Message>
+                    </Form.Field>
+                  </div>
                 </Tabs.Content>
                 <Tabs.Content
                   value="plotAddress"
@@ -75,7 +128,7 @@ export default function FindPlot() {
                 >
                   <div className="grid grid-cols-2 gap-6">
                     <Form.Field name="plotAddressStreet">
-                      <Form.Label className="text-sm font-semibold">
+                      <Form.Label className="text-sm font-semibold mb-1 block">
                         Ulica
                       </Form.Label>
                       <Form.Control asChild>
@@ -87,13 +140,13 @@ export default function FindPlot() {
                       </Form.Control>
                       <Form.Message
                         match="valueMissing"
-                        className="text-red-500"
+                        className="text-red-500 text-sm"
                       >
                         To pole nie może być puste
                       </Form.Message>
                     </Form.Field>
                     <Form.Field name="plotAddressNumber">
-                      <Form.Label className="text-sm font-semibold">
+                      <Form.Label className="text-sm font-semibold mb-1 block">
                         Numer budynku
                       </Form.Label>
                       <Form.Control asChild>
@@ -105,7 +158,7 @@ export default function FindPlot() {
                       </Form.Control>
                       <Form.Message
                         match="valueMissing"
-                        className="text-red-500"
+                        className="text-red-500 text-sm"
                       >
                         To pole nie może być puste
                       </Form.Message>
@@ -113,23 +166,12 @@ export default function FindPlot() {
                   </div>
                 </Tabs.Content>
               </Tabs.Root>
-              <Form.Field name="plotAddressNumber" className="mt-6">
-                <Form.Label className="text-sm font-semibold">
+              <Form.Field name="plotType" className="mt-6">
+                <Form.Label className="text-sm font-semibold mb-1 block">
                   Typ działki
                 </Form.Label>
                 <Form.Control asChild>
-                  <div className="relative">
-                    <span className="pointer-events-none absolute bg-white px-2 top-1/2 -translate-y-1/2 right-[2px]">
-                      <ChevronUpDownIcon className="w-6 h-6" />
-                    </span>
-                    <select className="w-full border border-gray-400 rounded-md h-12 px-4 cursor-pointer">
-                      {plotTypes.map((plotType: PlotType) => (
-                        <option key={plotType.id} value={plotType.minValue}>
-                          {plotType.name}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
+                  <Select />
                 </Form.Control>
               </Form.Field>
               <div className="flex justify-end">
