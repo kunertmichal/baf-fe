@@ -1,7 +1,9 @@
+import Link from 'next/link'
+
 export const Navbar = () => {
   return (
-    <nav className="flex items-center h-20 fixed top-0 left-0 w-full border shadow">
-      <div>
+    <nav className="flex items-center h-20 fixed top-0 left-0 w-full border shadow px-8">
+      <div className="flex">
         <svg
           width="64"
           height="32"
@@ -45,10 +47,10 @@ export const Navbar = () => {
           </defs>
         </svg>
       </div>
-      <ul className="flex">
-        <li>Strona główna</li>
-        <li>Kalkulator</li>
-        <li>Zainspiruj się</li>
+      <ul className="flex gap-x-6 ml-auto">
+        <Link href="/">Strona główna</Link>
+        <Link href="/oblicz-baf">Kalkulator</Link>
+        <Link href="/zainspiruj-sie">Zainspiruj się</Link>
       </ul>
     </nav>
   )
