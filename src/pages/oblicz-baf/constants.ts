@@ -1,4 +1,18 @@
-export const indicators = [
+export type IndicatorField = {
+  id: string
+  label: string
+  description: string
+  indicator: number
+}
+
+export type IndicatorGroup = {
+  id: string
+  label: string
+  color: string
+  fields: IndicatorField[]
+}
+
+export const indicators: IndicatorGroup[] = [
   {
     id: 'sealedFields',
     label: 'Powierzchnie szczelne',
@@ -149,3 +163,15 @@ export const indicators = [
     ]
   }
 ]
+
+export const initialState = indicators.reduce((previousValue, currentValue) => {
+  return {
+    ...previousValue,
+    ...currentValue.fields.reduce((innerPrev, innerCurr) => {
+      return {
+        ...innerPrev,
+        [innerCurr.id]: ''
+      }
+    }, {})
+  }
+}, {})

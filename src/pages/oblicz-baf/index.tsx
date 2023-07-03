@@ -4,31 +4,32 @@ import * as Accordion from '@radix-ui/react-accordion'
 import { DefaultLayout } from '@/components/DefaultLayout'
 import { Row } from '@/components/Row'
 import { AccordionsHeader } from '@/components/AccordionsHeader'
+import { BafVisualizer } from '@/components/BafVisualizer'
 import { usePlotData } from '@/store/store'
-import { indicators } from '@/constants/indicators'
 import { ChevronUpDownIcon } from '@heroicons/react/20/solid'
-
-const initialState = indicators.reduce((previousValue, currentValue) => {
-  return {
-    ...previousValue,
-    ...currentValue.fields.reduce((innerPrev, innerCurr) => {
-      return {
-        ...innerPrev,
-        [innerCurr.id]: 0
-      }
-    }, {})
-  }
-}, {})
+import * as C from './constants'
+import * as H from './helpers'
+import { BafBars } from '@/components/BafBars'
 
 export default function CalculateBAF() {
-  const [surfaceValues, setSurfaceValues] = useState(initialState)
+  const [surfaceValues, setSurfaceValues] = useState<{
+    [key: string]: '' | number
+  }>(C.initialState)
   const area = usePlotData(state => state.area)
   const plotType = usePlotData(state => state.type)
   const plotTypeName = plotType.name
   const minBafValue = plotType.minValue
+  const baf = H.calculateBaf(surfaceValues, area)
 
   const resetSurfaceValues = () => {
-    setSurfaceValues(initialState)
+    setSurfaceValues(C.initialState)
+  }
+
+  const updateSurfaceValues = (id: string, value: number) => {
+    setSurfaceValues(prev => ({
+      ...prev,
+      [id]: value
+    }))
   }
 
   return (
@@ -43,10 +44,10 @@ export default function CalculateBAF() {
           <Accordion.Root
             type="single"
             collapsible
-            defaultValue={indicators[0].id}
+            defaultValue={C.indicators[0].id}
             className="space-y-4"
           >
-            {indicators.map(indicator => (
+            {C.indicators.map(indicator => (
               <Accordion.Item key={indicator.id} value={indicator.id}>
                 <Accordion.Header
                   className="border-b-2 py-2 text-xl font-semibold"
@@ -56,7 +57,7 @@ export default function CalculateBAF() {
                     {indicator.label}
                     <div className="flex">
                       <p>
-                        0{' '}
+                        {H.sumCategoryValues(indicator.id, surfaceValues)}{' '}
                         <span className="font-normal inline-flex">
                           m<span className="text-xs">2</span>
                         </span>
@@ -74,7 +75,7 @@ export default function CalculateBAF() {
                         </p>
                         <p className="text-xs">{field.description}</p>
                       </div>
-                      <div className="col-span-2 flex items-center justify-center">
+                      <div className="col-span-3 flex items-center justify-center">
                         <Image
                           src="/indicator.png"
                           alt={field.label}
@@ -82,7 +83,20 @@ export default function CalculateBAF() {
                           height={70}
                         />
                       </div>
-                      <div className="col-span-4 flex items-center">Input</div>
+                      <div className="col-span-3 flex items-center">
+                        <input
+                          className="h-12 rounded-md border border-gray-400 px-4 w-full"
+                          type="number"
+                          value={surfaceValues[field.id]}
+                          onChange={e => {
+                            const target = e.target as HTMLInputElement
+                            updateSurfaceValues(field.id, Number(target.value))
+                          }}
+                        />
+                        <span className="ml-2 inline-flex">
+                          m<span className="text-xs">2</span>
+                        </span>
+                      </div>
                     </div>
                   </Accordion.Content>
                 ))}
@@ -90,7 +104,19 @@ export default function CalculateBAF() {
             ))}
           </Accordion.Root>
         </div>
-        <div>dzialka i wskazniki</div>
+        <div>
+          <BafVisualizer
+            area={area}
+            data={H.generateBafVisualizerData(surfaceValues)}
+          />
+          <div className="flex gap-8 justify-center items-end my-12">
+            <BafBars
+              area={area}
+              data={H.generateBafVisualizerData(surfaceValues)}
+            />
+            <div className="font-bold text-9xl leading-[0.77]">{baf}</div>
+          </div>
+        </div>
       </Row>
     </DefaultLayout>
   )

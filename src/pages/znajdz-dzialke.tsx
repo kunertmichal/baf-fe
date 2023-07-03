@@ -49,14 +49,12 @@ export default function FindPlot() {
     setPlotType(JSON.parse(plotType))
     setArea(766)
     router.push('/oblicz-baf')
-
-    console.log(payload)
   }
 
   return (
     <DefaultLayout>
       <Row className="grid-cols-2">
-        <div className="px-24 flex items-center">
+        <div className="p-24 flex items-center">
           <div className="w-full max-w-xl mx-auto">
             <PrimaryHeadline className="mb-2">
               Dane Twojej działki
