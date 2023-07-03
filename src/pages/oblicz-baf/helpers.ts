@@ -55,5 +55,5 @@ export const calculateBaf = (
 
   console.log(numerator, area)
 
-  return area === 0 || numerator === 0 ? '0.00' : (numerator / area).toFixed(2)
+  return area === 0 || numerator === 0 ? 0 : numerator / area
 }

@@ -1,15 +1,17 @@
 import { useState } from 'react'
 import Image from 'next/image'
 import * as Accordion from '@radix-ui/react-accordion'
+import { ChevronUpDownIcon } from '@heroicons/react/20/solid'
+import { usePlotData } from '@/store/store'
+import { classNames } from '@/helpers/classNames'
 import { DefaultLayout } from '@/components/DefaultLayout'
-import { Row } from '@/components/Row'
 import { AccordionsHeader } from '@/components/AccordionsHeader'
 import { BafVisualizer } from '@/components/BafVisualizer'
-import { usePlotData } from '@/store/store'
-import { ChevronUpDownIcon } from '@heroicons/react/20/solid'
+import { BafBars } from '@/components/BafBars'
+import { Row } from '@/components/Row'
 import * as C from './constants'
 import * as H from './helpers'
-import { BafBars } from '@/components/BafBars'
+import { Button } from '@/components/Button/Button'
 
 export default function CalculateBAF() {
   const [surfaceValues, setSurfaceValues] = useState<{
@@ -34,7 +36,7 @@ export default function CalculateBAF() {
 
   return (
     <DefaultLayout>
-      <Row className="grid-cols-2 max-w-7xl mx-auto p-12 gap-12">
+      <Row className="grid-cols-2 max-w-7xl mx-auto p-12 gap-24">
         <div>
           <AccordionsHeader
             plotTypeName={plotTypeName}
@@ -109,12 +111,23 @@ export default function CalculateBAF() {
             area={area}
             data={H.generateBafVisualizerData(surfaceValues)}
           />
-          <div className="flex gap-8 justify-center items-end my-12">
+          <div className="flex gap-8 items-end my-12">
             <BafBars
               area={area}
               data={H.generateBafVisualizerData(surfaceValues)}
             />
-            <div className="font-bold text-9xl leading-[0.77]">{baf}</div>
+            <div
+              className={classNames(
+                'font-bold text-9xl leading-[0.77]',
+                baf < minBafValue && 'text-red-500'
+              )}
+            >
+              {baf.toFixed(2)}
+            </div>
+          </div>
+          <div className="flex gap-2">
+            <Button>Sugestie</Button>
+            <Button>Pobierz raport</Button>
           </div>
         </div>
       </Row>

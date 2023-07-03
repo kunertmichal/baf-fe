@@ -12,20 +12,18 @@ export const BafVisualizer = ({ data, area }: BafVisualizerProps) => {
   }
 
   return (
-    <div className="flex justify-center">
-      <div className="aspect-square max-w-sm max-h-[24rem] w-full border-2 border-black mx-auto flex flex-col justify-end">
-        {data.map(({ value, color }) => (
-          <div
-            key={color}
-            style={{
-              flex: `${calculateInnerDivHeight(value)}`,
-              maxHeight: '100%',
-              background: color,
-              width: '100%'
-            }}
-          />
-        ))}
-      </div>
+    <div className="aspect-square max-w-sm max-h-[24rem] w-full border-2 border-black flex flex-col justify-end">
+      {data.map(({ value, color }) => (
+        <div
+          key={color}
+          style={{
+            flex: `${calculateInnerDivHeight(value)}`,
+            maxHeight: '100%',
+            background: color,
+            width: '100%'
+          }}
+        />
+      ))}
     </div>
   )
 }
