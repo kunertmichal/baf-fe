@@ -126,8 +126,10 @@ export default function CalculateBAF() {
             </div>
           </div>
           <div className="flex gap-2">
-            <Button>Sugestie</Button>
-            <Button>Pobierz raport</Button>
+            <Button as="link" href="/co-poprawic">
+              Co poprawić
+            </Button>
+            <Button variant="secondary">Pobierz raport</Button>
           </div>
         </div>
       </Row>

@@ -12,16 +12,28 @@ export const Button = (props: ButtonProps) => {
     onClick,
     disabled,
     type = 'button',
+    variant = 'primary',
     ...rest
   } = props
   const cssBase =
-    'inline-flex gap-2 items-center px-6 min-w-[10rem] h-12 rounded-md text-white ' +
-    'font-semibold bg-orange-400 focus:outline-none focus:ring-2 focus:ring-orange-400 ' +
+    'inline-flex gap-2 items-center px-6 min-w-[10rem] h-12 rounded-md ' +
+    'font-semibold focus:outline-none focus:ring-2 ' +
     'focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed'
+
+  const variants = {
+    primary: 'bg-orange-400 focus:ring-orange-400 text-white',
+    secondary:
+      'bg-white-400 focus:ring-gray-600 text-gray-600 border-2 border-gray-600'
+  }
+
+  const arrowVariants = {
+    primary: 'fill-white',
+    secondary: 'fill-gray-600'
+  }
 
   const Component: ElementType = as === 'link' ? Link : 'button'
   const componentProps = {
-    className: classNames(cssBase, className),
+    className: classNames(cssBase, variants[variant], className),
     disabled,
     ...(onClick && { onClick }),
     ...(Component === 'button' && type && { type }),
@@ -31,7 +43,9 @@ export const Button = (props: ButtonProps) => {
   return (
     <Component {...componentProps}>
       {children}
-      <ArrowDownRightIcon className="w-6 h-6 fill-white ml-auto" />
+      <ArrowDownRightIcon
+        className={classNames('w-6 h-6 ml-auto', arrowVariants[variant])}
+      />
     </Component>
   )
 }

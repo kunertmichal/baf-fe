@@ -6,6 +6,7 @@ export type BaseButtonProps = {
   onClick?: MouseEventHandler<HTMLButtonElement | HTMLAnchorElement>
   disabled?: boolean
   type?: 'button' | 'submit' | 'reset'
+  variant?: 'primary' | 'secondary'
 }
 
 export type ButtonAsButtonProps = BaseButtonProps & {

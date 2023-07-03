@@ -53,7 +53,5 @@ export const calculateBaf = (
     return total + value * indicator
   }, 0)
 
-  console.log(numerator, area)
-
   return area === 0 || numerator === 0 ? 0 : numerator / area
 }
