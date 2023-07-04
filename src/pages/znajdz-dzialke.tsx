@@ -16,15 +16,15 @@ export default function FindPlot() {
   const router = useRouter()
   const setPlotType = usePlotData(state => state.setType)
   const setArea = usePlotData(state => state.setArea)
-  const [activeTab, setActiveTab] = useState<'plotIds' | 'plotAddress'>(
-    'plotIds'
-  )
+  const [activeTab, setActiveTab] = useState<
+    'search_by_ids' | 'search_by_address'
+  >('search_by_ids')
   const [requestStatus, setRequestStatus] = useState<
-    'idle' | 'pending' | 'resolved' | 'rejected'
+    'idle' | 'pending' | 'rejected'
   >('idle')
 
   const handleTabChange = (value: string) => {
-    setActiveTab(value as 'plotIds' | 'plotAddress')
+    setActiveTab(value as 'search_by_ids' | 'search_by_address')
   }
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -36,16 +36,21 @@ export default function FindPlot() {
       (formElements.namedItem(name) as HTMLInputElement).value
 
     const plotType = getValue('plotType')
-
     const searchParams = {
-      district_id: getValue('plotDistrictId'),
-      plot_id: getValue('plotId')
+      ...(activeTab === 'search_by_ids' && {
+        district_id: getValue('plotDistrictId'),
+        plot_id: getValue('plotId')
+      }),
+      ...(activeTab === 'search_by_address' && {
+        street: getValue('plotStreet'),
+        number: getValue('plotNumber')
+      })
     }
 
     try {
       setRequestStatus('pending')
       const data = (await ky
-        .get('http://localhost:5001/plot_data/search_by_ids', {
+        .get(`http://localhost:5001/plot_data/${activeTab}`, {
           searchParams
         })
         .json()) as { area: number }
@@ -74,19 +79,22 @@ export default function FindPlot() {
               <Tabs.Root value={activeTab} onValueChange={handleTabChange}>
                 <Tabs.List className="flex space-x-2 border-b-2 pb-2">
                   <Tabs.Trigger
-                    value="plotIds"
+                    value="search_by_ids"
                     className="data-[state='active']:text-gray-600 data-[state='active']:bg-gray-100 py-2 px-4 rounded-md font-semibold text-gray-400 hover:text-gray-600"
                   >
                     Numer działki
                   </Tabs.Trigger>
                   <Tabs.Trigger
-                    value="plotAddress"
+                    value="search_by_address"
                     className="data-[state='active']:text-gray-600 data-[state='active']:bg-gray-100 p-2 rounded-md font-semibold text-gray-400 hover:text-gray-600"
                   >
                     Adres działki
                   </Tabs.Trigger>
                 </Tabs.List>
-                <Tabs.Content value="plotIds" className="pt-8 focus:outline-0">
+                <Tabs.Content
+                  value="search_by_ids"
+                  className="pt-8 focus:outline-0"
+                >
                   <div className="grid grid-cols-2 gap-6">
                     <Form.Field name="plotDistrictId">
                       <Form.Label className="text-sm font-semibold mb-1 block">
@@ -127,11 +135,11 @@ export default function FindPlot() {
                   </div>
                 </Tabs.Content>
                 <Tabs.Content
-                  value="plotAddress"
+                  value="search_by_address"
                   className="pt-8 focus:outline-0"
                 >
                   <div className="grid grid-cols-2 gap-6">
-                    <Form.Field name="plotAddressStreet">
+                    <Form.Field name="plotStreet">
                       <Form.Label className="text-sm font-semibold mb-1 block">
                         Ulica
                       </Form.Label>
@@ -149,7 +157,7 @@ export default function FindPlot() {
                         To pole nie może być puste
                       </Form.Message>
                     </Form.Field>
-                    <Form.Field name="plotAddressNumber">
+                    <Form.Field name="plotNumber">
                       <Form.Label className="text-sm font-semibold mb-1 block">
                         Numer budynku
                       </Form.Label>

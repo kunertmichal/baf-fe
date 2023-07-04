@@ -1,21 +1,52 @@
 import type { ChangeEvent } from 'react'
+import ky from 'ky'
 import { DefaultLayout } from '@/components/DefaultLayout'
 import { Row } from '@/components/Row'
 import { Button } from '@/components/Button/Button'
 import { useState } from 'react'
 
 export default function GetInspired() {
-  const [file, setFile] = useState<File | null>(null)
+  const [image, setImage] = useState<File | null>(null)
+  const [bafalizedImage, setBafalizedImage] = useState<File | null>(null)
+  const [requestStatus, setRequestStatus] = useState<
+    'idle' | 'pending' | 'resolved' | 'rejected'
+  >('idle')
+  const imageUrl = image ? URL.createObjectURL(image) : undefined
+  const bafalizedImageUrl = bafalizedImage
+    ? URL.createObjectURL(bafalizedImage)
+    : undefined
 
   const onFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files
-    if (files) {
-      setFile(files[0])
+    const images = e.target.files
+    if (images) {
+      setImage(images[0])
     }
   }
 
-  const bafalize = () => {
-    // TODO: implement
+  const clearImage = () => {
+    setImage(null)
+    setBafalizedImage(null)
+    setRequestStatus('idle')
+  }
+
+  const bafalize = async () => {
+    if (!image) return
+
+    try {
+      setRequestStatus('pending')
+
+      const formData = new FormData()
+      formData.append('file', image)
+      console.log(formData.get('file'))
+
+      await ky.post('http://localhost:5001/bafalize', {
+        body: formData
+      })
+
+      setRequestStatus('resolved')
+    } catch (e) {
+      setRequestStatus('rejected')
+    }
   }
 
   const download = () => {
@@ -26,16 +57,16 @@ export default function GetInspired() {
     <DefaultLayout>
       <Row className="grid-cols-2 gap-12 max-w-7xl mx-auto p-24">
         <div>
-          {file ? (
+          {image ? (
             <div className="relative group">
               <img
-                src={URL.createObjectURL(file)}
+                src={imageUrl}
                 alt="Wybrane zdjęcie"
                 className="rounded-md w-full h-auto"
               />
               <button
                 className="absolute top-0 left-0 w-full h-full bg-black flex justify-center items-center rounded-md opacity-0 group-hover:opacity-75 transition-opacity duration-200"
-                onClick={() => setFile(null)}
+                onClick={clearImage}
               >
                 <span className="text-white font-semibold text-lg">
                   Usuń zdjęcie
@@ -68,28 +99,45 @@ export default function GetInspired() {
                       name="file-upload"
                       type="file"
                       className="sr-only"
-                      accept=".png, .jpg, .jpeg"
+                      accept=".jpg"
                       onChange={onFileChange}
                     />
                   </label>
                   <p className="pl-1">lub przeciągnij i upuść</p>
                 </div>
-                <p className="text-xs leading-5 text-gray-600">
-                  PNG, JPG, JPEG
-                </p>
+                <p className="text-xs leading-5 text-gray-600">JPG</p>
               </div>
             </div>
           )}
           <div className="flex justify-end mt-12">
-            <Button>Bafalizuj</Button>
+            <Button
+              disabled={!image || requestStatus === 'pending'}
+              onClick={bafalize}
+            >
+              Bafalizuj
+            </Button>
           </div>
         </div>
         <div>
-          <div className="min-h-[20rem] border-2 border-gray-900/25 rounded-md flex items-center justify-center px-6 bg-gray-100">
-            Tutaj pojawi się zbafalizowane zdjęcie
-          </div>
+          {requestStatus === 'idle' && (
+            <div className="min-h-[20rem] border-2 border-gray-900/25 rounded-md flex items-center justify-center px-6 bg-gray-100">
+              Tutaj pojawi się zbafalizowane zdjęcie
+            </div>
+          )}
+          {requestStatus === 'resolved' && (
+            <div>
+              <img src={bafalizedImageUrl} />
+            </div>
+          )}
+          {requestStatus === 'pending' && (
+            <div className="min-h-[20rem] border-2 border-gray-900/25 rounded-md flex items-center justify-center px-6 bg-gray-100">
+              Przetwarzanie zdjęcia...
+            </div>
+          )}
           <div className="flex justify-end mt-12">
-            <Button disabled>Pobierz</Button>
+            <Button disabled onClick={download}>
+              Pobierz
+            </Button>
           </div>
         </div>
       </Row>
