@@ -7,7 +7,6 @@ type BafBarsProps = {
 }
 
 export const BafBars = ({ data, area }: BafBarsProps) => {
-  console.log(data)
   const calculateInnerDivHeight = (value: number) => {
     return value === 0 ? 0 : (value / area) * 100
   }

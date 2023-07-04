@@ -1,6 +1,7 @@
 import type { FormEvent } from 'react'
 import * as Tabs from '@radix-ui/react-tabs'
 import * as Form from '@radix-ui/react-form'
+import ky from 'ky'
 import { usePlotData } from '@/store/store'
 import { DefaultLayout } from '@/components/DefaultLayout'
 import { Row } from '@/components/Row'
@@ -18,12 +19,15 @@ export default function FindPlot() {
   const [activeTab, setActiveTab] = useState<'plotIds' | 'plotAddress'>(
     'plotIds'
   )
+  const [requestStatus, setRequestStatus] = useState<
+    'idle' | 'pending' | 'resolved' | 'rejected'
+  >('idle')
 
   const handleTabChange = (value: string) => {
     setActiveTab(value as 'plotIds' | 'plotAddress')
   }
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
 
     const formElements = event.currentTarget.elements
@@ -33,22 +37,24 @@ export default function FindPlot() {
 
     const plotType = getValue('plotType')
 
-    const payload = {
-      data:
-        activeTab === 'plotIds'
-          ? {
-              districtId: getValue('plotDistrictId'),
-              plotId: getValue('plotId')
-            }
-          : {
-              street: getValue('plotAddressStreet'),
-              number: getValue('plotAddressNumber')
-            }
+    const searchParams = {
+      district_id: getValue('plotDistrictId'),
+      plot_id: getValue('plotId')
     }
 
-    setPlotType(JSON.parse(plotType))
-    setArea(766)
-    router.push('/oblicz-baf')
+    try {
+      setRequestStatus('pending')
+      const data = (await ky
+        .get('http://localhost:5001/plot_data/search_by_ids', {
+          searchParams
+        })
+        .json()) as { area: number }
+      setArea(+data.area.toFixed(0))
+      setPlotType(JSON.parse(plotType))
+      router.push('/oblicz-baf')
+    } catch (e) {
+      setRequestStatus('rejected')
+    }
   }
 
   return (
@@ -172,8 +178,17 @@ export default function FindPlot() {
                   <Select />
                 </Form.Control>
               </Form.Field>
+              {requestStatus === 'rejected' && (
+                <div className="bg-red-200 p-4 rounded-md text-red-500 text-sm mt-12">
+                  Nie udało się pobrac danych podanej działki. Spróbuj ponownie.
+                </div>
+              )}
               <div className="flex justify-end">
-                <Button className="mt-12" type="submit">
+                <Button
+                  className="mt-12"
+                  type="submit"
+                  disabled={requestStatus === 'pending'}
+                >
                   Dalej
                 </Button>
               </div>

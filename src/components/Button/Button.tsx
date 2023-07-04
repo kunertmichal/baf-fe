@@ -21,7 +21,7 @@ export const Button = (props: ButtonProps) => {
     'focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed'
 
   const variants = {
-    primary: 'bg-orange-400 focus:ring-orange-400 text-white',
+    primary: 'bg-[#BACA40] focus:ring-[#BACA40] text-white',
     secondary:
       'bg-white-400 focus:ring-gray-600 text-gray-600 border-2 border-gray-600'
   }

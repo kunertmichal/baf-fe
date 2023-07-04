@@ -2,7 +2,7 @@ import Link from 'next/link'
 
 export const Navbar = () => {
   return (
-    <nav className="flex items-center h-20 fixed top-0 left-0 w-full border shadow px-8 bg-white">
+    <nav className="flex items-center h-20 fixed z-10 top-0 left-0 w-full border shadow px-8 bg-white">
       <div className="flex items-center gap-2">
         <svg
           width="64"

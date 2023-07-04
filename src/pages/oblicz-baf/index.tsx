@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import * as Accordion from '@radix-ui/react-accordion'
 import { ChevronUpDownIcon } from '@heroicons/react/20/solid'
@@ -22,6 +22,7 @@ export default function CalculateBAF() {
   const plotTypeName = plotType.name
   const minBafValue = plotType.minValue
   const baf = H.calculateBaf(surfaceValues, area)
+  const [dupa, setDupa] = useState({})
 
   const resetSurfaceValues = () => {
     setSurfaceValues(C.initialState)
@@ -33,6 +34,14 @@ export default function CalculateBAF() {
       [id]: value
     }))
   }
+
+  useEffect(() => {
+    fetch(
+      'http://localhost:5001/plot_data/search_by_ids?plot_id=461&district_id=0020'
+    )
+      .then(res => res.json())
+      .then(data => setDupa(data))
+  }, [])
 
   return (
     <DefaultLayout>
@@ -107,29 +116,31 @@ export default function CalculateBAF() {
           </Accordion.Root>
         </div>
         <div>
-          <BafVisualizer
-            area={area}
-            data={H.generateBafVisualizerData(surfaceValues)}
-          />
-          <div className="flex gap-8 items-end my-12">
-            <BafBars
+          <div className="sticky top-32">
+            <BafVisualizer
               area={area}
               data={H.generateBafVisualizerData(surfaceValues)}
             />
-            <div
-              className={classNames(
-                'font-bold text-9xl leading-[0.77]',
-                baf < minBafValue && 'text-red-500'
-              )}
-            >
-              {baf.toFixed(2)}
+            <div className="flex gap-8 items-end my-12">
+              <BafBars
+                area={area}
+                data={H.generateBafVisualizerData(surfaceValues)}
+              />
+              <div
+                className={classNames(
+                  'font-bold text-9xl leading-[0.77]',
+                  baf < minBafValue && 'text-red-500'
+                )}
+              >
+                {baf.toFixed(2)}
+              </div>
             </div>
-          </div>
-          <div className="flex gap-2">
-            <Button as="link" href="/co-poprawic">
-              Co poprawić
-            </Button>
-            <Button variant="secondary">Pobierz raport</Button>
+            <div className="flex gap-2">
+              <Button as="link" href="/co-poprawic">
+                Co poprawić
+              </Button>
+              <Button variant="secondary">Pobierz raport</Button>
+            </div>
           </div>
         </div>
       </Row>

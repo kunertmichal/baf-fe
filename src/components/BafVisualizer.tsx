@@ -17,7 +17,7 @@ export const BafVisualizer = ({ data, area }: BafVisualizerProps) => {
         <div
           key={color}
           style={{
-            flex: `${calculateInnerDivHeight(value)}`,
+            height: `${calculateInnerDivHeight(value)}%`,
             maxHeight: '100%',
             background: color,
             width: '100%'
